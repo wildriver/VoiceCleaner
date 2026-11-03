@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Modified: spatial batching, mixed precision and fused-kernel selection.
+// Modified for RE-USE Cleaner: FP32 scan output (avoids FP16 overflow at 48 kHz).
 // Original scan and convolution: SpeechLens, Apache-2.0.
 import Foundation
 import MLX
@@ -233,7 +234,10 @@ final class BidirectionalMamba: Module, UnaryLayer {
         }
         let lanes = mode == .simd4 ? 4 : mode == .simd8 ? 8 : 1
         let y = kernels.scan([xz, w.aLog, projected, w.dt, w.deltaBias, u, w.skip],
-            grid: (grid.0*lanes, 1, 1), threadGroup: (mode.threadCount, 1, 1), outputShapes: [u.shape], outputDTypes: [.float16])[0]
+            // RE-USE Cleaner: keep the scan output in FP32. At 48 kHz the
+            // out-projection reaches ~6.6e4 (FP32 reference), above the FP16
+            // maximum of 65504, so an FP16 buffer overflowed to Inf.
+            grid: (grid.0*lanes, 1, 1), threadGroup: (mode.threadCount, 1, 1), outputShapes: [u.shape], outputDTypes: [.float32])[0]
         if let separateWeight,let residualWeight {
             let projected = matmul(y.reshaped(2,p,d),separateWeight.swappedAxes(-1,-2)).reshaped(2,b,t,f,c)
             let residual = matmul(x.asType(.float16),residualWeight.T)
