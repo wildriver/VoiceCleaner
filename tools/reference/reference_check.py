@@ -47,6 +47,12 @@ win = make_even(cfg["stft_cfg"]["win_size"] * sr // base)
 
 audio, file_sr = sf.read(args.input, dtype="float32")
 assert file_sr == sr and audio.ndim == 1, "input must be mono at the given rate"
+# AVAudioFile may report a slightly shorter length for ffmpeg-written WAVs;
+# process exactly the samples the MLX side processed.
+mlx_length = sf.info(args.mlx).frames
+if mlx_length < audio.shape[0]:
+    print(f"note: trimming input {audio.shape[0]} -> {mlx_length} samples to match the MLX input", file=sys.stderr)
+    audio = audio[:mlx_length]
 noisy = torch.from_numpy(audio).unsqueeze(0)
 torch.set_num_threads(os.cpu_count() or 4)
 with torch.no_grad():
