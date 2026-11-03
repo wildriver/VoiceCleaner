@@ -9,7 +9,7 @@
 
 ## 使い方
 
-1. [Releases](../../releases) から `RE-USE-Cleaner.dmg` をダウンロードし、アプリを「アプリケーション」フォルダへドラッグします。
+1. [Actions](../../actions/workflows/build.yml) の最新の成功したビルドの「Artifacts」から `RE-USE-Cleaner` をダウンロードして展開し（GitHub へのログインが必要）、`RE-USE-Cleaner.dmg` を開いて、アプリを「アプリケーション」フォルダへドラッグします。
 2. アプリを起動します。初回だけ、ノイズ除去モデル（約54 MB）を自動でダウンロードします。
 3. 動画または音声ファイルをウィンドウにドロップします（「ファイルを選択…」からも選べます）。
 4. 処理が終わると、元のファイルと同じフォルダに `元の名前_clean.mp4` が作られます。「Finderで表示」で開けます。
@@ -67,5 +67,3 @@ open REUSECleaner.xcodeproj
 - `Sources/ReuseKit`・`Sources/ReuseModelAssets`：[Corvelis/RE-USE-MLX-CoreML](https://github.com/Corvelis/RE-USE-MLX-CoreML) v0.1.0（Apache-2.0）を改変
 - モデル：NVIDIA RE-USE、OpenMDW-1.1（[licenses/NVIDIA-RE-USE.txt](licenses/NVIDIA-RE-USE.txt)）。リポジトリには含まず、初回起動時にダウンロード
 - 依存ライブラリ：[licenses/](licenses/) を参照
-
-このリポジトリは [aheadly-tech/voice-enhancer](https://github.com/aheadly-tech/voice-enhancer) のフォークとして始まりましたが、`mp4-cleaner` ブランチ以降は独立したアプリです。
