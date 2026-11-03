@@ -28,12 +28,12 @@ Click a thumbnail to play it. Each video switches back and forth between the ori
 
 <table>
 <tr>
-<td align="center" width="50%"><a href="docs/media/demo_en_felton.mp4"><img src="docs/media/demo_en_felton.jpg" alt="Street interview at an intersection: passing cars"></a><br>Street interview at an intersection: passing cars</td>
-<td align="center" width="50%"><a href="docs/media/demo_en_ces.mp4"><img src="docs/media/demo_en_ces.jpg" alt="Crowded trade show floor"></a><br>Crowded trade show floor</td>
+<td align="center" width="50%"><a href="https://cdn.jsdelivr.net/gh/wildriver/VoiceCleaner@main/docs/media/demo_en_felton.mp4"><img src="docs/media/demo_en_felton.jpg" alt="Street interview at an intersection: passing cars"></a><br>Street interview at an intersection: passing cars</td>
+<td align="center" width="50%"><a href="https://cdn.jsdelivr.net/gh/wildriver/VoiceCleaner@main/docs/media/demo_en_ces.mp4"><img src="docs/media/demo_en_ces.jpg" alt="Crowded trade show floor"></a><br>Crowded trade show floor</td>
 </tr>
 <tr>
-<td align="center" width="50%"><a href="docs/media/demo_ja_kantube.mp4"><img src="docs/media/demo_ja_kantube.jpg" alt="Destroyer flight deck: wind and helicopter rotor (Japanese)"></a><br>Destroyer flight deck: wind and helicopter rotor (Japanese)</td>
-<td align="center" width="50%"><a href="docs/media/promo_ja.mp4"><img src="docs/media/promo_ja.jpg" alt="15-second intro (Japanese)"></a><br>15-second intro (Japanese)</td>
+<td align="center" width="50%"><a href="https://cdn.jsdelivr.net/gh/wildriver/VoiceCleaner@main/docs/media/demo_ja_kantube.mp4"><img src="docs/media/demo_ja_kantube.jpg" alt="Destroyer flight deck: wind and helicopter rotor (Japanese)"></a><br>Destroyer flight deck: wind and helicopter rotor (Japanese)</td>
+<td align="center" width="50%"><a href="https://cdn.jsdelivr.net/gh/wildriver/VoiceCleaner@main/docs/media/promo_ja.mp4"><img src="docs/media/promo_ja.jpg" alt="15-second intro (Japanese)"></a><br>15-second intro (Japanese)</td>
 </tr>
 </table>
 

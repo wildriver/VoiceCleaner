@@ -28,12 +28,12 @@
 
 <table>
 <tr>
-<td align="center" width="50%"><a href="docs/media/promo_ja.mp4"><img src="docs/media/promo_ja.jpg" alt="紹介動画（15秒）"></a><br>紹介動画（15秒）</td>
-<td align="center" width="50%"><a href="docs/media/demo_ja_kantube.mp4"><img src="docs/media/demo_ja_kantube.jpg" alt="護衛艦の甲板：強風とヘリのローター音"></a><br>護衛艦の甲板：強風とヘリのローター音</td>
+<td align="center" width="50%"><a href="https://cdn.jsdelivr.net/gh/wildriver/VoiceCleaner@main/docs/media/promo_ja.mp4"><img src="docs/media/promo_ja.jpg" alt="紹介動画（15秒）"></a><br>紹介動画（15秒）</td>
+<td align="center" width="50%"><a href="https://cdn.jsdelivr.net/gh/wildriver/VoiceCleaner@main/docs/media/demo_ja_kantube.mp4"><img src="docs/media/demo_ja_kantube.jpg" alt="護衛艦の甲板：強風とヘリのローター音"></a><br>護衛艦の甲板：強風とヘリのローター音</td>
 </tr>
 <tr>
-<td align="center" width="50%"><a href="docs/media/demo_en_felton.mp4"><img src="docs/media/demo_en_felton.jpg" alt="交差点での街頭インタビュー：車の走行音（英語）"></a><br>交差点での街頭インタビュー：車の走行音（英語）</td>
-<td align="center" width="50%"><a href="docs/media/demo_en_ces.mp4"><img src="docs/media/demo_en_ces.jpg" alt="展示会場の雑踏（英語）"></a><br>展示会場の雑踏（英語）</td>
+<td align="center" width="50%"><a href="https://cdn.jsdelivr.net/gh/wildriver/VoiceCleaner@main/docs/media/demo_en_felton.mp4"><img src="docs/media/demo_en_felton.jpg" alt="交差点での街頭インタビュー：車の走行音（英語）"></a><br>交差点での街頭インタビュー：車の走行音（英語）</td>
+<td align="center" width="50%"><a href="https://cdn.jsdelivr.net/gh/wildriver/VoiceCleaner@main/docs/media/demo_en_ces.mp4"><img src="docs/media/demo_en_ces.jpg" alt="展示会場の雑踏（英語）"></a><br>展示会場の雑踏（英語）</td>
 </tr>
 </table>
 
