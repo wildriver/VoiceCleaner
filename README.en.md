@@ -22,6 +22,23 @@
 
 ---
 
+## 🎬 Demo
+
+Click a thumbnail to play it. Each video switches back and forth between the original audio and the cleaned audio.
+
+<table>
+<tr>
+<td align="center" width="50%"><a href="docs/media/demo_en_felton.mp4"><img src="docs/media/demo_en_felton.jpg" alt="Street interview at an intersection: passing cars"></a><br>Street interview at an intersection: passing cars</td>
+<td align="center" width="50%"><a href="docs/media/demo_en_ces.mp4"><img src="docs/media/demo_en_ces.jpg" alt="Crowded trade show floor"></a><br>Crowded trade show floor</td>
+</tr>
+<tr>
+<td align="center" width="50%"><a href="docs/media/demo_ja_kantube.mp4"><img src="docs/media/demo_ja_kantube.jpg" alt="Destroyer flight deck: wind and helicopter rotor (Japanese)"></a><br>Destroyer flight deck: wind and helicopter rotor (Japanese)</td>
+<td align="center" width="50%"><a href="docs/media/promo_ja.mp4"><img src="docs/media/promo_ja.jpg" alt="15-second intro (Japanese)"></a><br>15-second intro (Japanese)</td>
+</tr>
+</table>
+
+Sources and licenses of the footage are listed in [docs/media/CREDITS.md](docs/media/CREDITS.md); the videos are not covered by Apache-2.0.
+
 ## ✨ Features
 
 <table>
@@ -81,6 +98,44 @@ flowchart LR
 
 > [!TIP]
 > RE-USE looks at both past and future audio, so it is not suited to real-time use such as a virtual microphone for calls. VoiceCleaner focuses on processing files.
+
+## 📊 Evaluation
+
+### Test sets with clean references
+
+Noisy recordings from [VoiceBank+DEMAND](https://datashare.ed.ac.uk/handle/10283/2791) (48 kHz) and [URGENT 2024](https://urgent-challenge.github.io/urgent2024/) (16 kHz) were cleaned and compared with the clean originals. Higher is better for every metric.
+
+| Recording | Length | PESQ (wb) | STOI | SI-SDR |
+| :-- | --: | :-: | :-: | :-: |
+| VoiceBank+DEMAND (several speakers joined) | 120.7 s | 1.67 → **3.13** | 0.898 → **0.943** | 5.3 → **19.2 dB** |
+| VoiceBank+DEMAND p232_177 | 2.2 s | 1.34 → **2.31** | 0.792 → **0.920** | 5.4 → **15.9 dB** |
+| VoiceBank+DEMAND p257_290 | 2.3 s | 1.20 → **2.51** | 0.877 → **0.950** | 6.1 → **14.9 dB** |
+| VoiceBank+DEMAND p257_426 | 2.3 s | 1.12 → **2.76** | 0.841 → **0.941** | 1.1 → **16.3 dB** |
+| URGENT 2024 fileid_26119 | 7.9 s | 1.05 → **1.63** | 0.588 → **0.762** | −1.4 → **6.2 dB** |
+
+The recordings are the test fixtures of [SpeechLens](https://github.com/faraday/SpeechLens). SpeechLens runs the same RE-USE model (with the noncommercial `nvidia/RE-USE` weights) and scored about the same on every metric (PESQ 3.13 vs 3.10 on the 120.7 s recording).
+
+### Real footage
+
+On the 20-second excerpts behind the demo videos, loudness was measured in 0.5 s blocks. The quietest 10% shows the background noise between words; the loudest 10% shows the level of the voice.
+
+| Footage | Background noise | Change in voice level |
+| :-- | :-: | :-: |
+| Crowded trade show floor | −27 dB → −72 dB | −1.3 dB |
+| Street interview at an intersection | −33 dB → below −90 dB | −1.5 dB |
+| Destroyer flight deck (wind, rotor) | −26 dB → below −90 dB | −1.2 dB |
+
+Background noise drops by 40 dB or more while the voice keeps its level.
+
+### Processing time
+
+Time to clean 120 s of mono audio on an Apple M4 Max (128 GB). Stereo takes about twice as long, since each channel is processed separately.
+
+| Sample rate | Time |
+| :-- | --: |
+| 48 kHz | 83 s |
+| 44.1 kHz | 77 s |
+| 16 kHz | 32 s |
 
 ## 💻 Requirements
 
