@@ -10,9 +10,10 @@ permissions:
   contents: read
 
 concurrency:
-  group: build-${{ github.ref }}
-  # Only superseded PR runs are cancelled; a cancelled run on main would turn the badge red.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  # Superseded PR runs are cancelled. Every push to main gets its own group, because a
+  # cancelled (or replaced, while waiting) run on main would turn the badge red.
+  group: build-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build:
