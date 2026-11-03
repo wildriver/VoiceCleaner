@@ -287,6 +287,36 @@ public actor ReuseEngine {
         }
     }
 
+    /// Diagnostic: runs one window stage by stage and reports the largest
+    /// absolute value after each stage (NaN/Inf show up as non-finite).
+    public func traceWindow(_ samples: [Float], sampleRate: Int) throws -> [(String, Float)] {
+        let config = STFTConfig.forSampleRate(sampleRate)
+        return try Device.withDefaultDevice(.gpu) {
+            try withError {
+                try load()
+                var rows = [(String, Float)]()
+                func record(_ name: String, _ x: MLXArray) {
+                    eval(x)
+                    let finite = MLX.where(isNaN(x), MLXArray(Float.infinity), abs(x.asType(.float32))).max().item(Float.self)
+                    rows.append((name, finite))
+                }
+                let (mag, phase) = try Spectral.analysis(samples, config: config)
+                record("stft_mag", mag); record("stft_phase", phase)
+                var x = stacked([mag.transposed(0, 2, 1), phase.transposed(0, 2, 1)], axis: -1)
+                x = padded(x, widths: [IntOrPair(0), IntOrPair((0, 2)), IntOrPair((0, 2)), IntOrPair(0)])
+                x = model!.denseEncoder(x); record("encoder \(x.shape)", x)
+                for (index, block) in model!.tfMamba.enumerated() {
+                    let time = block.timeMamba(x)
+                    record("block\(index).time", time)
+                    x = block(x); record("block\(index)", x)
+                }
+                record("mask_decoder", model!.maskDecoder(x))
+                record("phase_decoder", model!.phaseDecoder(x))
+                return rows
+            }
+        }
+    }
+
     /// Loads and validates the model without processing audio.
     public func prepare() throws {
         try Device.withDefaultDevice(.gpu) { try withError { try load() } }

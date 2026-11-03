@@ -82,7 +82,18 @@ struct ReuseClean {
                 if let index = arguments.firstIndex(of: "--sample-rate"), index + 1 < arguments.count,
                    let value = Int(arguments[index + 1]) { sampleRate = value }
                 let samples = try readMono(URL(fileURLWithPath: arguments[1]), sampleRate: sampleRate)
-                let engine = provider.makeEngine()
+                var optimization = ReuseOptimization.recommended
+                if let index = arguments.firstIndex(of: "--optimization"), index + 1 < arguments.count {
+                    guard let value = ReuseOptimization(rawValue: arguments[index + 1]) else { fail("unknown optimization") }
+                    optimization = value
+                }
+                let engine = provider.makeEngine(optimization: optimization)
+                if arguments.contains("--trace") {
+                    for (name, value) in try await engine.traceWindow(samples, sampleRate: sampleRate) {
+                        print("trace \(name) maxabs=\(value)")
+                    }
+                    return
+                }
                 let began = Date()
                 let output = try await engine.enhanceWindow(samples, sampleRate: sampleRate)
                 print(String(format: "window %d samples in %.3f s", samples.count, Date().timeIntervalSince(began)))

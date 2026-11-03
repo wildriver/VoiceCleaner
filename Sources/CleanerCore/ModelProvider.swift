@@ -39,8 +39,8 @@ public final class ModelProvider: Sendable {
     }
 
     /// Creates an engine for the installed model. The engine loads lazily.
-    public func makeEngine() -> ReuseEngine {
+    public func makeEngine(optimization: ReuseOptimization = .recommended) -> ReuseEngine {
         ReuseEngine(modelPack: ReuseModelPack(root: store.installedModelDirectory),
-                    cacheDirectory: store.compilationCacheDirectory)
+                    cacheDirectory: store.compilationCacheDirectory, optimization: optimization)
     }
 }

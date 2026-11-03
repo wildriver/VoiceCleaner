@@ -96,6 +96,15 @@ jobs:
           $BIN download
           brew install ffmpeg
           curl -sSL -o mic_test2.wav https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE/resolve/main/noisy_audio/mic_test2.wav
+          for SR in 16000 48000; do
+            ffmpeg -hide_banner -loglevel error -y -i mic_test2.wav -t 2.5 -ac 1 -ar $SR -c:a pcm_f32le diag_$SR.wav
+            for OPT in baseline warpFast; do
+              echo "=== $SR Hz, $OPT"
+              $BIN window diag_$SR.wav diag_out.wav --sample-rate $SR --optimization $OPT || true
+            done
+            $BIN window diag_$SR.wav diag_out.wav --sample-rate $SR --optimization baseline --trace | grep -E "stft|encoder|block(0|1|29)[.]?|decoder|nan|inf" | head -20 || true
+          done
+          curl -sSL -o mic_test2.wav https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE/resolve/main/noisy_audio/mic_test2.wav
           ffprobe -hide_banner mic_test2.wav
           ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=size=1280x720:rate=30 -i mic_test2.wav \
             -filter_complex "[1:a]aresample=48000,pan=stereo|c0=c0|c1=0.7*c0[a]" -map 0:v -map "[a]" -shortest \
