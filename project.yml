@@ -37,8 +37,8 @@ targets:
       base:
         PRODUCT_NAME: VoiceCleaner
         PRODUCT_BUNDLE_IDENTIFIER: io.github.wildriver.voicecleaner
-        MARKETING_VERSION: "0.1.0"
-        CURRENT_PROJECT_VERSION: "1"
+        MARKETING_VERSION: "0.1.1"
+        CURRENT_PROJECT_VERSION: "2"
         SWIFT_VERSION: "5.0"
         ARCHS: arm64
         ENABLE_HARDENED_RUNTIME: YES
