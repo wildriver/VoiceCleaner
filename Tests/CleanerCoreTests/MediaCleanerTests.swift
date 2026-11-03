@@ -4,6 +4,20 @@ import XCTest
 @testable import CleanerCore
 
 final class MediaCleanerTests: XCTestCase {
+    func testOutputKeepsContainer() {
+        let cases: [(String, Bool, String)] = [
+            ("a.mov", true, "mov"), ("a.M4V", true, "m4v"), ("a.avi", true, "mp4"), ("a.mp4", true, "mp4"),
+            ("a.wav", false, "wav"), ("a.flac", false, "flac"), ("a.caf", false, "caf"), ("a.aif", false, "aiff"),
+            ("a.m4a", false, "m4a"), ("a.mp3", false, "m4a"), ("a.ogg", false, "m4a"),
+        ]
+        for (name, hasVideo, ext) in cases {
+            XCTAssertEqual(MediaCleaner.outputExtension(for: URL(fileURLWithPath: name), hasVideo: hasVideo), ext, name)
+        }
+        XCTAssertEqual(CleanerOptions().processingRate(for: 44_100), 44_100)
+        XCTAssertEqual(CleanerOptions().processingRate(for: 96_000), 48_000)
+        XCTAssertEqual(CleanerOptions().processingRate(for: 6_000), 8_000)
+    }
+
     func testReadFillsWholeWindow() throws {
         // AVAudioFile.read returns short reads for mono CAF files; windows must still be filled exactly.
         for channels in [1, 2] {
@@ -12,7 +26,7 @@ final class MediaCleanerTests: XCTestCase {
             let total = 480_000
             let signal = (0..<total).map { Float(sin(Double($0) * 0.001)) }
             let writer = try AVAudioFile(forWriting: url,
-                settings: MediaCleaner.pcmSettings(channels: channels, sampleRate: 48_000, interleaved: false),
+                settings: MediaCleaner.pcmSettings(layout: .standard(channels), sampleRate: 48_000, interleaved: false),
                 commonFormat: .pcmFormatFloat32, interleaved: false)
             let pcm = try XCTUnwrap(AVAudioPCMBuffer(pcmFormat: writer.processingFormat, frameCapacity: AVAudioFrameCount(total)))
             pcm.frameLength = AVAudioFrameCount(total)

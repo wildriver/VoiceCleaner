@@ -60,7 +60,7 @@ struct ReuseClean {
             case "clean":
                 guard arguments.count >= 3 else { fail("usage: voicecleaner clean <input> <output> [--mono]") }
                 var options = CleanerOptions()
-                options.keepStereo = !arguments.contains("--mono")
+                options.keepChannels = !arguments.contains("--mono")
                 let engine = provider.makeEngine()
                 try await engine.prepare()
                 let cleaner = MediaCleaner(engine: engine)

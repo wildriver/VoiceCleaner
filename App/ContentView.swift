@@ -76,7 +76,7 @@ struct ContentView: View {
 
     private var footer: some View {
         HStack {
-            Toggle("ステレオを保持（左右を別々に処理）", isOn: $model.keepStereo)
+            Toggle("チャンネルを保持（ステレオ・マルチチャンネルの各チャンネルを別々に処理）", isOn: $model.keepChannels)
                 .help("オフにするとモノラルで書き出します。処理時間は約半分になります。")
             Spacer()
             if model.jobs.contains(where: { !$0.isActive }) {

@@ -32,7 +32,7 @@ final class AppModel: ObservableObject {
 
     @Published var modelState: ModelState = .checking
     @Published var jobs: [Job] = []
-    @Published var keepStereo = true
+    @Published var keepChannels = true
 
     private var provider: ModelProvider?
     private var engine: ReuseEngine?
@@ -110,7 +110,7 @@ final class AppModel: ObservableObject {
         running = true
         job.state = .running
         var options = CleanerOptions()
-        options.keepStereo = keepStereo
+        options.keepChannels = keepChannels
         job.task = Task { [weak self] in
             await self?.run(job, engine: engine, options: options)
             guard let self else { return }
@@ -153,9 +153,11 @@ final class AppModel: ObservableObject {
             job.stageText = "完了"
             job.fraction = 1
             job.remainingText = ""
-            job.detailText = String(format: "%@ · %@ · 処理時間 %@",
-                                    report.channels == 2 ? "ステレオ" : "モノラル",
-                                    "\(report.sampleRate / 1000) kHz",
+            let channels = report.channels == 1 ? "モノラル" : report.channels == 2 ? "ステレオ" : "\(report.channels)ch"
+            job.detailText = String(format: "%@ · %@ · %@ · 処理時間 %@",
+                                    channels,
+                                    String(format: "%g kHz", Double(report.sampleRate) / 1000),
+                                    report.encoding,
                                     Self.format(report.totalSeconds))
         } catch is CancellationError {
             job.state = .cancelled
@@ -171,7 +173,7 @@ final class AppModel: ObservableObject {
     /// `<name>_clean.<ext>` next to the input, or in ~/Movies/VoiceCleaner
     /// when the input folder is not writable.
     static func outputURL(for input: URL, hasVideo: Bool) throws -> URL {
-        let (_, ext) = MediaCleaner.outputType(for: input, hasVideo: hasVideo)
+        let ext = MediaCleaner.outputExtension(for: input, hasVideo: hasVideo)
         var folder = input.deletingLastPathComponent()
         if !FileManager.default.isWritableFile(atPath: folder.path) {
             folder = FileManager.default.urls(for: .moviesDirectory, in: .userDomainMask)[0]
