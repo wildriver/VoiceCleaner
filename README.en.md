@@ -49,14 +49,11 @@ Drop files onto the window. Multiple files are processed in order, with an estim
 
 ## 🚀 Getting started
 
-1. Open the latest successful run in [**Actions**](../../actions/workflows/build.yml) and download **VoiceCleaner** under "Artifacts" (requires a GitHub login).
-2. Unzip it, open `VoiceCleaner.dmg`, and drag the app into your Applications folder.
+1. Download `VoiceCleaner.dmg` from [**Releases**](../../releases/latest).
+2. Open `VoiceCleaner.dmg` and drag the app into your Applications folder.
 3. Launch VoiceCleaner. On first launch it downloads the noise removal model automatically.
 4. Drop a video (MP4, MOV, M4V) or audio file (M4A, WAV, …) onto the window.
 5. When it finishes, **`<original name>_clean.mp4`** appears next to the original file. Click "Finderで表示" (Show in Finder) to open it.
-
-> [!NOTE]
-> Current builds are ad-hoc signed. If macOS warns you on first launch, open System Settings → Privacy & Security and click "Open Anyway".
 
 > [!NOTE]
 > The app's user interface is currently in Japanese.
@@ -90,55 +87,6 @@ flowchart LR
 - A Mac with Apple Silicon (M1 or later), macOS 15 or later
 - 16 GB of memory or more recommended (48 kHz processing with 5 s windows uses several GB)
 - Processing time depends on your Mac and the length of the video
-
-## 🧑‍💻 For developers
-
-<details>
-<summary>Building</summary>
-
-Builds run automatically on GitHub Actions ([`.github/workflows/build.yml`](.github/workflows/build.yml)). CI runs the unit tests, builds the app, processes a 34-second test video, and compares the output with the official PyTorch implementation.
-
-To build locally you need Xcode 26.4 or later and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
-
-```bash
-xcodegen generate
-```
-
-```bash
-open VoiceCleaner.xcodeproj
-```
-
-The package also contains a command-line version, `voicecleaner`.
-
-</details>
-
-<details>
-<summary>Developer ID signing and notarization</summary>
-
-When these repository secrets are set, CI produces a dmg signed with Developer ID and notarized by Apple.
-
-| Secret | Contents |
-| :-- | :-- |
-| `MACOS_CERTIFICATE_P12` | Base64 of the "Developer ID Application" certificate (.p12) |
-| `MACOS_CERTIFICATE_PASSWORD` | Password of the .p12 |
-| `APPLE_API_KEY_P8` | Contents of the App Store Connect API key (.p8) |
-| `APPLE_API_KEY_ID` | API key ID |
-| `APPLE_API_ISSUER_ID` | Issuer ID |
-
-</details>
-
-<details>
-<summary>Repository layout</summary>
-
-| Path | Contents |
-| :-- | :-- |
-| `App/` | SwiftUI app |
-| `Sources/CleanerCore/` | Media reading and writing, windowed overlap-add, model management |
-| `Sources/ReuseKit/` | RE-USE inference on MLX (modified from [RE-USE-MLX-CoreML](https://github.com/Corvelis/RE-USE-MLX-CoreML) v0.1.0: 48 kHz support, FP16 overflow fix) |
-| `Sources/voicecleaner/` | Command-line version (used in CI) |
-| `tools/reference/` | Comparison scripts against the official PyTorch implementation |
-
-</details>
 
 ## 📄 License
 

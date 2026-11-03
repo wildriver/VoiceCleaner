@@ -49,14 +49,11 @@
 
 ## 🚀 使い方
 
-1. [**Actions**](../../actions/workflows/build.yml) の最新の成功したビルドを開き、「Artifacts」の **VoiceCleaner** をダウンロードします（GitHub へのログインが必要です）。
-2. 展開した `VoiceCleaner.dmg` を開き、アプリを「アプリケーション」フォルダへドラッグします。
+1. [**Releases**](../../releases/latest) から `VoiceCleaner.dmg` をダウンロードします。
+2. `VoiceCleaner.dmg` を開き、アプリを「アプリケーション」フォルダへドラッグします。
 3. VoiceCleaner を起動します。初回だけ、ノイズ除去モデルを自動でダウンロードします。
 4. 動画（MP4・MOV・M4V）や音声（M4A・WAV など）をウィンドウにドロップします。
 5. 完了すると、元のファイルと同じフォルダに **`元の名前_clean.mp4`** ができます。「Finderで表示」ですぐ開けます。
-
-> [!NOTE]
-> 現在の配布物はアドホック署名です。初回起動で警告が出た場合は、「システム設定」→「プライバシーとセキュリティ」で「このまま開く」を押してください。
 
 ## 🛠 しくみ
 
@@ -87,55 +84,6 @@ flowchart LR
 - Apple Silicon（M1 以降）の Mac、macOS 15 以降
 - メモリ 16 GB 以上を推奨（48 kHz・5 秒窓の処理で数 GB を使います）
 - 処理時間は、Mac の性能と動画の長さによって変わります
-
-## 🧑‍💻 開発者向け
-
-<details>
-<summary>ビルド方法</summary>
-
-ビルドは GitHub Actions（[`.github/workflows/build.yml`](.github/workflows/build.yml)）で自動実行されます。CI では単体テスト、アプリのビルド、34 秒の動画を使った動作確認、公式 PyTorch 実装との出力比較を行います。
-
-手元でビルドする場合は、Xcode 26.4 以降と [XcodeGen](https://github.com/yonaskolb/XcodeGen) が必要です。
-
-```bash
-xcodegen generate
-```
-
-```bash
-open VoiceCleaner.xcodeproj
-```
-
-コマンドライン版 `voicecleaner` も同じパッケージに含まれています。
-
-</details>
-
-<details>
-<summary>Developer ID 署名と公証</summary>
-
-リポジトリの Secrets に次の値を設定すると、CI が Developer ID で署名して公証した dmg を作ります。
-
-| Secret | 内容 |
-| :-- | :-- |
-| `MACOS_CERTIFICATE_P12` | 「Developer ID Application」証明書（.p12）の Base64 |
-| `MACOS_CERTIFICATE_PASSWORD` | .p12 のパスワード |
-| `APPLE_API_KEY_P8` | App Store Connect API キー（.p8）の中身 |
-| `APPLE_API_KEY_ID` | API キーの ID |
-| `APPLE_API_ISSUER_ID` | Issuer ID |
-
-</details>
-
-<details>
-<summary>リポジトリ構成</summary>
-
-| パス | 内容 |
-| :-- | :-- |
-| `App/` | SwiftUI アプリ |
-| `Sources/CleanerCore/` | 動画・音声の読み書き、窓処理（重ね合わせ）、モデル管理 |
-| `Sources/ReuseKit/` | RE-USE の MLX 推論（[RE-USE-MLX-CoreML](https://github.com/Corvelis/RE-USE-MLX-CoreML) v0.1.0 を改変：48 kHz 対応、FP16 オーバーフロー対策） |
-| `Sources/voicecleaner/` | コマンドライン版（CI 用） |
-| `tools/reference/` | 公式 PyTorch 実装との比較スクリプト |
-
-</details>
 
 ## 📄 ライセンス
 
