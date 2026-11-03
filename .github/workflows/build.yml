@@ -1,0 +1,134 @@
+name: Build
+
+on:
+  push:
+    branches: [main, mp4-cleaner]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 90
+    env:
+      HAS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE_P12 != '' }}
+      HAS_NOTARY_KEY: ${{ secrets.APPLE_API_KEY_ID != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          sw_vers
+          xcodebuild -version
+          xcodebuild -downloadComponent MetalToolchain || true
+          sysctl -n machdep.cpu.brand_string hw.memsize
+
+      - name: Unit tests
+        run: |
+          set -o pipefail
+          xcodebuild test -scheme REUSECleaner-Package -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath .build/dd -skipPackagePluginValidation -skipMacroValidation | tail -n 40
+
+      - name: Build command-line tool
+        run: |
+          set -o pipefail
+          xcodebuild build -scheme reuse-clean -configuration Release -destination 'platform=macOS,arch=arm64' \
+            -derivedDataPath .build/dd -skipPackagePluginValidation | tail -n 20
+          ls .build/dd/Build/Products/Release
+
+      - name: Build app
+        run: |
+          set -o pipefail
+          brew install xcodegen
+          xcodegen generate
+          xcodebuild build -project REUSECleaner.xcodeproj -scheme "RE-USE Cleaner" -configuration Release \
+            -destination 'platform=macOS,arch=arm64' -derivedDataPath .build/app -skipPackagePluginValidation | tail -n 20
+          mkdir -p dist
+          cp -R ".build/app/Build/Products/Release/RE-USE Cleaner.app" dist/
+
+      - name: Sign with Developer ID and notarize
+        if: env.HAS_CERTIFICATE == 'true'
+        env:
+          MACOS_CERTIFICATE_P12: ${{ secrets.MACOS_CERTIFICATE_P12 }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          APPLE_API_KEY_P8: ${{ secrets.APPLE_API_KEY_P8 }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+        run: scripts/sign_and_notarize.sh "dist/RE-USE Cleaner.app"
+
+      - name: Package
+        run: |
+          set -e
+          if [ -z "$(codesign -dv "dist/RE-USE Cleaner.app" 2>&1 | grep 'Developer ID')" ]; then
+            codesign --force --deep --sign - "dist/RE-USE Cleaner.app"
+          fi
+          mkdir -p dist/dmg
+          cp -R "dist/RE-USE Cleaner.app" dist/dmg/
+          ln -s /Applications dist/dmg/Applications
+          hdiutil create -volname "RE-USE Cleaner" -srcfolder dist/dmg -ov -format UDZO dist/RE-USE-Cleaner.dmg
+          if [ "$HAS_CERTIFICATE" = "true" ] && [ "$HAS_NOTARY_KEY" = "true" ]; then
+            scripts/sign_and_notarize.sh --dmg dist/RE-USE-Cleaner.dmg
+          fi
+        env:
+          APPLE_API_KEY_P8: ${{ secrets.APPLE_API_KEY_P8 }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RE-USE-Cleaner
+          path: dist/RE-USE-Cleaner.dmg
+
+      - name: Inference smoke test (MP4, 48 kHz stereo)
+        id: smoke
+        continue-on-error: true
+        run: |
+          set -eo pipefail
+          BIN=.build/dd/Build/Products/Release/reuse-clean
+          $BIN download
+          brew install ffmpeg
+          curl -sSL -o mic_test2.wav https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE/resolve/main/noisy_audio/mic_test2.wav
+          ffprobe -hide_banner mic_test2.wav
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=size=1280x720:rate=30 -i mic_test2.wav \
+            -filter_complex "[1:a]aresample=48000,pan=stereo|c0=c0|c1=0.7*c0[a]" -map 0:v -map "[a]" -shortest \
+            -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 192k test.mp4
+          $BIN clean test.mp4 test_clean.mp4 | tee report.txt
+          ffprobe -hide_banner -show_entries stream=codec_type,codec_name,channels,sample_rate,duration -of compact test.mp4 test_clean.mp4
+          ffmpeg -hide_banner -loglevel error -y -i test_clean.mp4 -vn test_clean.wav
+
+      - name: Reference check against official PyTorch model (48 kHz window)
+        continue-on-error: true
+        run: |
+          set -eo pipefail
+          BIN=.build/dd/Build/Products/Release/reuse-clean
+          python3 -m venv .venv && . .venv/bin/activate
+          pip install -q torch numpy soundfile safetensors huggingface_hub einops
+          ffmpeg -hide_banner -loglevel error -y -i mic_test2.wav -t 2.5 -ac 1 -ar 48000 -c:a pcm_f32le window.wav
+          $BIN window window.wav window_mlx.wav --sample-rate 48000
+          python tools/reference/reference_check.py window.wav window_mlx.wav window_ref.wav | tee reference.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-output
+          path: |
+            report.txt
+            reference.json
+            test_clean.mp4
+            test_clean.wav
+            window*.wav
+          if-no-files-found: ignore
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${GITHUB_REF_NAME}" dist/RE-USE-Cleaner.dmg --title "RE-USE Cleaner ${GITHUB_REF_NAME}" --notes-file docs/RELEASE_NOTES.md

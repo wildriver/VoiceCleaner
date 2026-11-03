@@ -1,0 +1,44 @@
+RE-USE Cleaner
+Copyright 2026 RE-USE Cleaner contributors
+
+Licensed under the Apache License, Version 2.0. See LICENSE.
+
+This product includes ReuseKit from RE-USE-MLX-CoreML v0.1.0
+(https://github.com/Corvelis/RE-USE-MLX-CoreML), Apache-2.0, modified:
+the STFT geometry is derived from the sample rate (48 kHz support) and
+ReuseEngine gained a single-window API. The original NOTICE follows.
+
+The NVIDIA RE-USE model (OpenMDW-1.1) is downloaded at first launch from
+https://huggingface.co/AILogDev/RE-USE-MLX-CoreML and is not part of this
+repository. See licenses/NVIDIA-RE-USE.txt.
+
+----------------------------------------------------------------------
+ReuseKit / RE-USE Lab
+Copyright 2026 ReuseKit contributors
+
+Licensed under the Apache License, Version 2.0. See LICENSE.
+Model weights and third-party components retain their own license terms.
+The original sample recording is Apache-2.0; see licenses/Audio-Samples.txt.
+
+This product includes modified Swift inference and Metal scan/convolution code
+from SpeechLens, revision f6c640fce1d265e8b4b7564ec81dff1f08d67200.
+https://github.com/faraday/SpeechLens
+Modifications include actor-confined execution, MLX/Core ML partitioning,
+spatial batching, mixed precision and fused Metal kernels.
+
+Original SpeechLens NOTICE follows:
+
+SpeechLens
+Copyright 2026 Çağatay Çallı
+
+Licensed under the Apache License, Version 2.0.
+See LICENSE for the full license text.
+
+Additional portions:
+Cooperative-tensor fragment layout: Copyright © 2025 Apple Inc.
+Licensed under MIT; see licenses/MLX-Core.txt.
+Metal-cpp: Copyright 2020-2024 Apple Inc.; Apache-2.0.
+Swift Numerics: Copyright (c) 2019-2025 Apple Inc. and the Swift Numerics
+project authors; Apache-2.0 with the Swift Runtime Library Exception.
+
+Full model, dependency and audio notices are in licenses/ and App/Notices.txt.
