@@ -2,6 +2,15 @@
 # Pure-PyTorch stand-in for mamba_ssm.Mamba (v1 semantics, sequential scan) so the
 # official RE-USE code can run on CPU for reference comparisons. Slow; tests only.
 import math, torch, torch.nn as nn, torch.nn.functional as F
+# Optional activation statistics: name -> max |value| (set TRACE = {} to enable).
+TRACE = None
+CURRENT = ["?"]
+
+def _record(name, value):
+    if TRACE is not None:
+        key = CURRENT[0] + "." + name
+        TRACE[key] = max(TRACE.get(key, 0.0), float(value.detach().abs().max()))
+
 class Mamba(nn.Module):
     def __init__(self, d_model, d_state=16, d_conv=4, expand=2):
         super().__init__()
@@ -16,9 +25,9 @@ class Mamba(nn.Module):
         self.out_proj = nn.Linear(self.d_inner, d_model, bias=False)
     def forward(self, x):
         B,L,_ = x.shape
-        xz = self.in_proj(x); x_, z = xz.chunk(2, -1)
+        xz = self.in_proj(x); x_, z = xz.chunk(2, -1); _record('in_proj', xz)
         x_ = F.silu(self.conv1d(x_.transpose(1,2))[..., :L]).transpose(1,2)
-        dbc = self.x_proj(x_); dt, Bm, Cm = dbc.split([self.dt_rank, self.d_state, self.d_state], -1)
+        _record('conv_silu', x_); dbc = self.x_proj(x_); _record('x_proj', dbc); dt, Bm, Cm = dbc.split([self.dt_rank, self.d_state, self.d_state], -1)
         dt = F.softplus(self.dt_proj(dt))               # B L D
         A = -torch.exp(self.A_log)                       # D N
         dA = torch.exp(dt.unsqueeze(-1)*A)               # B L D N
@@ -27,4 +36,6 @@ class Mamba(nn.Module):
         for t in range(L):
             h = dA[:,t]*h + dBx[:,t]; ys.append((h*Cm[:,t].unsqueeze(1)).sum(-1))
         y = torch.stack(ys,1) + x_*self.D
-        return self.out_proj(y*F.silu(z))
+        _record('scan_y', y); g = y*F.silu(z); _record('gated', g)
+        out = self.out_proj(g); _record('out_proj', out)
+        return out
