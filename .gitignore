@@ -5,3 +5,5 @@ App/Info.plist
 DerivedData/
 dist/
 *.dmg
+build/
+App/AppStore.entitlements

@@ -8,8 +8,11 @@ import ReuseModelAssets
 public final class ModelProvider: Sendable {
     public let store: ReuseModelStore
     public let source: ReuseModelSource
+    /// A model pack shipped inside the app, used instead of downloading.
+    public let bundledModel: URL?
 
-    public init(applicationSupport: URL? = nil, caches: URL? = nil) throws {
+    public init(applicationSupport: URL? = nil, caches: URL? = nil, bundledModel: URL? = nil) throws {
+        self.bundledModel = bundledModel
         let fm = FileManager.default
         let support = applicationSupport
             ?? fm.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("VoiceCleaner")
@@ -38,7 +41,8 @@ public final class ModelProvider: Sendable {
     public var downloadBytes: Int64 { store.catalog.totalBytes }
 
     public func isInstalled() async -> Bool {
-        (try? await store.inspect().isInstalled) ?? false
+        if bundledModel != nil { return true }
+        return (try? await store.inspect().isInstalled) ?? false
     }
 
     public func download(progress: @escaping @Sendable (Double) -> Void = { _ in }) async throws {
@@ -47,7 +51,7 @@ public final class ModelProvider: Sendable {
 
     /// Creates an engine for the installed model. The engine loads lazily.
     public func makeEngine(optimization: ReuseOptimization = .recommended) -> ReuseEngine {
-        ReuseEngine(modelPack: ReuseModelPack(root: store.installedModelDirectory),
+        ReuseEngine(modelPack: ReuseModelPack(root: bundledModel ?? store.installedModelDirectory),
                     cacheDirectory: store.compilationCacheDirectory, optimization: optimization)
     }
 }

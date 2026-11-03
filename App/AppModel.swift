@@ -35,6 +35,7 @@ final class AppModel: ObservableObject {
     @Published var keepChannels = true
 
     private var provider: ModelProvider?
+    private let outputFolders = OutputFolders()
     private var engine: ReuseEngine?
     private var running = false
 
@@ -47,7 +48,9 @@ final class AppModel: ObservableObject {
     func prepareModel() async {
         modelState = .checking
         do {
-            let provider = try self.provider ?? ModelProvider()
+            // The App Store build carries the model; the others download it once.
+            let bundled = Bundle.main.url(forResource: "REUSEModel", withExtension: nil)
+            let provider = try self.provider ?? ModelProvider(bundledModel: bundled)
             self.provider = provider
             if !(await provider.isInstalled()) {
                 modelState = .downloading(0)
@@ -128,7 +131,10 @@ final class AppModel: ObservableObject {
         defer { if accessing { input.stopAccessingSecurityScopedResource() } }
         do {
             let hasVideo = await MediaCleaner.hasVideo(input)
-            let output = try Self.outputURL(for: input, hasVideo: hasVideo)
+            guard let folder = outputFolders.folder(for: input) else {
+                throw CocoaError(.userCancelled)
+            }
+            let output = Self.outputURL(for: input, in: folder, hasVideo: hasVideo)
             let cleaner = MediaCleaner(engine: engine)
             let began = Date()
             let report = try await cleaner.clean(input: input, output: output, options: options) { progress in
@@ -159,7 +165,7 @@ final class AppModel: ObservableObject {
                                     String(format: "%g kHz", Double(report.sampleRate) / 1000),
                                     report.encoding,
                                     Self.format(report.totalSeconds))
-        } catch is CancellationError {
+        } catch let error where error is CancellationError || (error as? CocoaError)?.code == .userCancelled {
             job.state = .cancelled
             job.stageText = "キャンセルしました"
             job.remainingText = ""
@@ -170,16 +176,9 @@ final class AppModel: ObservableObject {
         }
     }
 
-    /// `<name>_clean.<ext>` next to the input, or in ~/Movies/VoiceCleaner
-    /// when the input folder is not writable.
-    static func outputURL(for input: URL, hasVideo: Bool) throws -> URL {
+    /// `<name>_clean.<ext>` in `folder`, numbered if the name is taken.
+    static func outputURL(for input: URL, in folder: URL, hasVideo: Bool) -> URL {
         let ext = MediaCleaner.outputExtension(for: input, hasVideo: hasVideo)
-        var folder = input.deletingLastPathComponent()
-        if !FileManager.default.isWritableFile(atPath: folder.path) {
-            folder = FileManager.default.urls(for: .moviesDirectory, in: .userDomainMask)[0]
-                .appendingPathComponent("VoiceCleaner", isDirectory: true)
-            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        }
         let base = input.deletingPathExtension().lastPathComponent + "_clean"
         var candidate = folder.appendingPathComponent(base).appendingPathExtension(ext)
         var counter = 2
