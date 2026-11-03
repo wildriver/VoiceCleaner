@@ -207,7 +207,9 @@ public final class MediaCleaner {
         let destination = try AVAudioFile(forWriting: output,
             settings: Self.pcmSettings(channels: channels, sampleRate: options.sampleRate, interleaved: false),
             commonFormat: .pcmFormatFloat32, interleaved: false)
-        defer { destination.close() }
+        var closed = false
+        defer { if !closed { destination.close() } }
+        var written = 0
 
         let windowLength = Int(options.windowSeconds * Double(options.sampleRate))
         let hop = max(1, Int(Double(windowLength) * options.hopFraction))
@@ -236,16 +238,28 @@ public final class MediaCleaner {
                 finalStart = start
                 finalized.append(values)
             }
-            try Self.write(finalized, at: finalStart, to: destination)
+            // AVAudioFile.length can lag behind while writing, so the position
+            // is tracked here instead of read back from the file.
+            guard finalStart == written else {
+                throw CleanerError.failed("出力位置が一致しません（\(finalStart) / \(written)）。")
+            }
+            written += try Self.write(finalized, to: destination)
             progress(Double(index + 1) / Double(plan.windows.count))
+        }
+        destination.close()
+        closed = true
+        guard written == total else { throw CleanerError.failed("出力の長さが一致しません（\(written) / \(total)）。") }
+        let check = try AVAudioFile(forReading: output, commonFormat: .pcmFormatFloat32, interleaved: false)
+        guard Int(check.length) == total else {
+            throw CleanerError.failed("一時ファイルの長さが一致しません（\(check.length) / \(total)）。")
         }
         return (total, plan.windows.count)
     }
 
-    private static func write(_ channels: [[Float]], at start: Int, to file: AVAudioFile) throws {
+    /// Returns the number of frames written.
+    private static func write(_ channels: [[Float]], to file: AVAudioFile) throws -> Int {
         let frames = channels.first?.count ?? 0
-        guard frames > 0 else { return }
-        guard Int(file.length) == start else { throw CleanerError.failed("出力位置が一致しません。") }
+        guard frames > 0 else { return 0 }
         guard let pcm = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: AVAudioFrameCount(frames)),
               let data = pcm.floatChannelData else { throw CleanerError.failed("メモリを確保できませんでした。") }
         for (c, values) in channels.enumerated() {
@@ -253,6 +267,7 @@ public final class MediaCleaner {
         }
         pcm.frameLength = AVAudioFrameCount(frames)
         try file.write(from: pcm)
+        return frames
     }
 
     // MARK: - Writing

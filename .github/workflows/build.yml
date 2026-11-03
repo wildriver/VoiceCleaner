@@ -106,12 +106,14 @@ jobs:
           done
           curl -sSL -o mic_test2.wav https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE/resolve/main/noisy_audio/mic_test2.wav
           ffprobe -hide_banner mic_test2.wav
-          ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=size=1280x720:rate=30 -i mic_test2.wav \
+          # ~34 s (mic_test2 looped): many windows, like a typical phone clip.
+          ffmpeg -hide_banner -loglevel error -y -stream_loop 6 -i mic_test2.wav -t 34 mic_long.wav
+          ffmpeg -hide_banner -loglevel error -y -f lavfi -i testsrc2=size=1280x720:rate=30 -i mic_long.wav \
             -filter_complex "[1:a]aresample=48000,pan=stereo|c0=c0|c1=0.7*c0[a]" -map 0:v -map "[a]" -shortest \
-            -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 192k test.mp4
-          $BIN clean test.mp4 test_clean.mp4 | tee report.txt
-          for F in test.mp4 test_clean.mp4; do ffprobe -hide_banner -v error -show_entries stream=codec_type,codec_name,width,height,channels,sample_rate,duration -of compact $F; done
-          ffmpeg -hide_banner -loglevel error -y -i test_clean.mp4 -vn test_clean.wav
+            -c:v libx264 -pix_fmt yuv420p -c:a aac -b:a 192k test.mov
+          $BIN clean test.mov test_clean.mov | tee report.txt
+          for F in test.mov test_clean.mov; do ffprobe -hide_banner -v error -show_entries stream=codec_type,codec_name,width,height,channels,sample_rate,duration -of compact $F; done
+          ffmpeg -hide_banner -loglevel error -y -i test_clean.mov -vn test_clean.wav
 
       - name: Reference check against official PyTorch model (48 kHz window)
         continue-on-error: true
@@ -132,7 +134,7 @@ jobs:
           path: |
             report.txt
             reference.json
-            test_clean.mp4
+            test_clean.mov
             test_clean.wav
             window*.wav
           if-no-files-found: ignore
