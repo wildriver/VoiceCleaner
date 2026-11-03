@@ -3,6 +3,10 @@
 </p>
 
 <p align="center">
+  <b>日本語</b> · <a href="README.en.md">English</a>
+</p>
+
+<p align="center">
   <img alt="macOS 15+" src="https://img.shields.io/badge/macOS-15%2B-111827?logo=apple&logoColor=white">
   <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple%20Silicon-M1%E2%80%93M4-4F46E5">
   <img alt="48 kHz Stereo" src="https://img.shields.io/badge/audio-48%20kHz%20stereo-0E7490">
