@@ -221,15 +221,11 @@ public final class MediaCleaner {
         }
         for (index, window) in plan.windows.enumerated() {
             try Task.checkCancellation()
-            source.framePosition = AVAudioFramePosition(window.start)
-            try source.read(into: buffer, frameCount: AVAudioFrameCount(window.length))
-            guard Int(buffer.frameLength) == window.length, let data = buffer.floatChannelData else {
-                throw CleanerError.failed("一時ファイルを読み込めませんでした。")
-            }
+            let input = try Self.read(source, start: window.start, length: window.length, using: buffer)
             var finalized = [[Float]]()
             var finalStart = 0
             for c in 0..<channels {
-                let samples = Array(UnsafeBufferPointer(start: data[c], count: window.length))
+                let samples = input[c]
                 // Too short for one STFT frame: keep the original samples.
                 let enhanced = window.length < minimum
                     ? samples
@@ -254,6 +250,26 @@ public final class MediaCleaner {
             throw CleanerError.failed("一時ファイルの長さが一致しません（\(check.length) / \(total)）。")
         }
         return (total, plan.windows.count)
+    }
+
+    /// Reads `length` frames starting at `start`, one array per channel.
+    /// `AVAudioFile.read` may return fewer frames than requested (it does for
+    /// mono CAF files), so this keeps reading until the window is filled.
+    static func read(_ file: AVAudioFile, start: Int, length: Int, using buffer: AVAudioPCMBuffer) throws -> [[Float]] {
+        let channels = Int(buffer.format.channelCount)
+        var result = (0..<channels).map { _ in [Float]() }
+        for c in 0..<channels { result[c].reserveCapacity(length) }
+        file.framePosition = AVAudioFramePosition(start)
+        while result[0].count < length {
+            let wanted = min(length - result[0].count, Int(buffer.frameCapacity))
+            try file.read(into: buffer, frameCount: AVAudioFrameCount(wanted))
+            let got = Int(buffer.frameLength)
+            guard got > 0, let data = buffer.floatChannelData else {
+                throw CleanerError.failed("一時ファイルを読み込めませんでした。")
+            }
+            for c in 0..<channels { result[c] += UnsafeBufferPointer(start: data[c], count: got) }
+        }
+        return result
     }
 
     /// Returns the number of frames written.
