@@ -147,3 +147,6 @@ Apple M4 Max（メモリ 128 GB）で、モノラル 120 秒の音声にかか�
 - `Sources/ReuseKit`・`Sources/ReuseModelAssets`：[Corvelis/RE-USE-MLX-CoreML](https://github.com/Corvelis/RE-USE-MLX-CoreML) v0.1.0（Apache-2.0）を改変
 - モデル：NVIDIA RE-USE、OpenMDW-1.1（[licenses/NVIDIA-RE-USE.txt](licenses/NVIDIA-RE-USE.txt)）。商用利用も可能な [nvidia/NVIDIA-NemotronLabs-RE-USE](https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE) 版から変換した重みを使います（非商用ライセンス NSCLv1 の旧 `nvidia/RE-USE` とは別物です）。リポジトリには含まず、初回起動時にダウンロードします
 - 依存ライブラリ：[licenses/](licenses/) を参照
+
+
+[![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/rkwytk)
