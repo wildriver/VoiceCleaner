@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // Command-line front end used for automated checks.
 //
-//   reuse-clean download
-//   reuse-clean clean <input> <output> [--mono]
-//   reuse-clean window <input.wav> <output.wav> [--sample-rate 48000]
+//   voicecleaner download
+//   voicecleaner clean <input> <output> [--mono]
+//   voicecleaner window <input.wav> <output.wav> [--sample-rate 48000]
 import AVFoundation
 import CleanerCore
 import Foundation
@@ -44,7 +44,7 @@ struct ReuseClean {
     static func main() async {
         let arguments = Array(CommandLine.arguments.dropFirst())
         guard let command = arguments.first else {
-            fail("usage: reuse-clean download | clean <input> <output> [--mono] | window <in.wav> <out.wav> [--sample-rate N]")
+            fail("usage: voicecleaner download | clean <input> <output> [--mono] | window <in.wav> <out.wav> [--sample-rate N]")
         }
         do {
             let provider = try ModelProvider()
@@ -58,7 +58,7 @@ struct ReuseClean {
                 }
                 print("model installed")
             case "clean":
-                guard arguments.count >= 3 else { fail("usage: reuse-clean clean <input> <output> [--mono]") }
+                guard arguments.count >= 3 else { fail("usage: voicecleaner clean <input> <output> [--mono]") }
                 var options = CleanerOptions()
                 options.keepStereo = !arguments.contains("--mono")
                 let engine = provider.makeEngine()
@@ -77,7 +77,7 @@ struct ReuseClean {
                 print(String(data: try encoder.encode(report), encoding: .utf8)!)
                 print(String(format: "realTimeFactor %.3f", report.realTimeFactor))
             case "window":
-                guard arguments.count >= 3 else { fail("usage: reuse-clean window <in.wav> <out.wav> [--sample-rate N]") }
+                guard arguments.count >= 3 else { fail("usage: voicecleaner window <in.wav> <out.wav> [--sample-rate N]") }
                 var sampleRate = 48_000
                 if let index = arguments.firstIndex(of: "--sample-rate"), index + 1 < arguments.count,
                    let value = Int(arguments[index + 1]) { sampleRate = value }

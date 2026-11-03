@@ -6,7 +6,7 @@ struct CleanerApp: App {
     @StateObject private var model = AppModel()
 
     var body: some Scene {
-        WindowGroup("RE-USE Cleaner") {
+        WindowGroup("VoiceCleaner") {
             ContentView()
                 .environmentObject(model)
                 .onOpenURL { model.add([$0]) }

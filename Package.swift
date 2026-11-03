@@ -2,11 +2,11 @@
 import PackageDescription
 
 let package = Package(
-    name: "REUSECleaner",
+    name: "VoiceCleanerKit",
     platforms: [.macOS(.v15)],
     products: [
         .library(name: "CleanerCore", targets: ["CleanerCore"]),
-        .executable(name: "reuse-clean", targets: ["reuse-clean"]),
+        .executable(name: "voicecleaner", targets: ["voicecleaner"]),
     ],
     dependencies: [.package(url: "https://github.com/ml-explore/mlx-swift", exact: "0.33.0")],
     targets: [
@@ -20,7 +20,7 @@ let package = Package(
         .target(name: "ReuseModelAssets"),
         .target(name: "CleanerCore", dependencies: ["ReuseKit", "ReuseModelAssets"],
                 resources: [.copy("Resources/ModelCatalog.json"), .copy("Resources/ModelSource.json")]),
-        .executableTarget(name: "reuse-clean", dependencies: ["CleanerCore"]),
+        .executableTarget(name: "voicecleaner", dependencies: ["CleanerCore"]),
         .testTarget(name: "CleanerCoreTests", dependencies: ["CleanerCore"]),
     ],
     swiftLanguageModes: [.v5]

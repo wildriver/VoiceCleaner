@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Modified for RE-USE Cleaner: added enhanceWindow(_:sampleRate:) and prepare().
+// Modified for VoiceCleaner: added enhanceWindow(_:sampleRate:) and prepare().
 import Foundation
 import MLX
 import MLXNN
@@ -260,7 +260,7 @@ public actor ReuseEngine {
         }
     }
 
-    /// Added for RE-USE Cleaner: enhances exactly one analysis window (for
+    /// Added for VoiceCleaner: enhances exactly one analysis window (for
     /// example 5 s) at the given sample rate on the MLX GPU path. The caller
     /// performs the windowed overlap-add across windows, so arbitrarily long
     /// inputs can be streamed with bounded memory.

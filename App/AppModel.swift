@@ -168,14 +168,14 @@ final class AppModel: ObservableObject {
         }
     }
 
-    /// `<name>_clean.<ext>` next to the input, or in ~/Movies/RE-USE Cleaner
+    /// `<name>_clean.<ext>` next to the input, or in ~/Movies/VoiceCleaner
     /// when the input folder is not writable.
     static func outputURL(for input: URL, hasVideo: Bool) throws -> URL {
         let (_, ext) = MediaCleaner.outputType(for: input, hasVideo: hasVideo)
         var folder = input.deletingLastPathComponent()
         if !FileManager.default.isWritableFile(atPath: folder.path) {
             folder = FileManager.default.urls(for: .moviesDirectory, in: .userDomainMask)[0]
-                .appendingPathComponent("RE-USE Cleaner", isDirectory: true)
+                .appendingPathComponent("VoiceCleaner", isDirectory: true)
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         }
         let base = input.deletingPathExtension().lastPathComponent + "_clean"

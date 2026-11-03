@@ -85,7 +85,7 @@ public final class MediaCleaner {
         let channels = options.keepStereo && sourceChannels >= 2 ? 2 : 1
 
         let work = FileManager.default.temporaryDirectory
-            .appendingPathComponent("RE-USE-Cleaner-" + UUID().uuidString, isDirectory: true)
+            .appendingPathComponent("VoiceCleaner-" + UUID().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: work, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: work) }
         let decodedURL = work.appendingPathComponent("decoded.caf")
@@ -381,7 +381,7 @@ public final class MediaCleaner {
 
     private static func pump(_ input: AVAssetWriterInput, writer: AVAssetWriter, cancellation: Cancellation,
                              label: String, next: @escaping () throws -> CMSampleBuffer?) async throws {
-        let queue = DispatchQueue(label: "reuse-cleaner." + label)
+        let queue = DispatchQueue(label: "voicecleaner." + label)
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             // Only touched on `queue`.
             let finished = Box(false)

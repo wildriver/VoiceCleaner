@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """Compare one RE-USE window processed by the official PyTorch code (CPU,
-pure-PyTorch Mamba stand-in) with the MLX output of `reuse-clean window`.
+pure-PyTorch Mamba stand-in) with the MLX output of `voicecleaner window`.
 
 usage: python reference_check.py <input.wav> <mlx_output.wav> <reference_output.wav>
 The input must be mono float WAV at 48 kHz (or the rate in --sample-rate).

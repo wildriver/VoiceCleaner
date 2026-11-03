@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Modified for RE-USE Cleaner: the STFT size and hop are derived from the
+// Modified for VoiceCleaner: the STFT size and hop are derived from the
 // sample rate (as in NVIDIA's inference_chunk.py) instead of being fixed to
 // 16 kHz, and the overlap-add kernel takes the hop as an input.
 import Foundation

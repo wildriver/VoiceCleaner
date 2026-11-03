@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1E1B4B"/>
+      <stop offset="0.55" stop-color="#312E81"/>
+      <stop offset="1" stop-color="#0E7490"/>
+    </linearGradient>
+    <linearGradient id="wave" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#A5B4FC"/>
+      <stop offset="1" stop-color="#67E8F9"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.38" r="0.6">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- macOS-style rounded square with margin -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#bg)"/>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#glow)"/>
+  <!-- noisy part: scattered short bars, faded -->
+  <g fill="#FFFFFF" opacity="0.28">
+    <rect x="214" y="470" width="22" height="84" rx="11"/>
+    <rect x="252" y="430" width="22" height="164" rx="11"/>
+    <rect x="290" y="488" width="22" height="48" rx="11"/>
+    <rect x="328" y="410" width="22" height="204" rx="11"/>
+    <rect x="366" y="456" width="22" height="112" rx="11"/>
+  </g>
+  <!-- divider sparkle -->
+  <path d="M452 512 l18 -46 18 46 46 18 -46 18 -18 46 -18 -46 -46 -18z" fill="#FFFFFF" opacity="0.95"/>
+  <!-- clean part: smooth waveform bars -->
+  <g fill="url(#wave)">
+    <rect x="560" y="452" width="30" height="120" rx="15"/>
+    <rect x="610" y="382" width="30" height="260" rx="15"/>
+    <rect x="660" y="322" width="30" height="380" rx="15"/>
+    <rect x="710" y="402" width="30" height="220" rx="15"/>
+    <rect x="760" y="462" width="30" height="100" rx="15"/>
+  </g>
+</svg>

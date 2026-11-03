@@ -1,14 +1,14 @@
-name: REUSECleaner
+name: VoiceCleaner
 options:
   bundleIdPrefix: io.github.wildriver
   deploymentTarget:
     macOS: "15.0"
   createIntermediateGroups: true
 packages:
-  REUSECleaner:
+  VoiceCleanerKit:
     path: .
 targets:
-  RE-USE Cleaner:
+  VoiceCleaner:
     type: application
     platform: macOS
     sources:
@@ -16,13 +16,13 @@ targets:
       - path: Resources/Notices.txt
         buildPhase: resources
     dependencies:
-      - package: REUSECleaner
+      - package: VoiceCleanerKit
         product: CleanerCore
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: RE-USE Cleaner
-        CFBundleName: RE-USE Cleaner
+        CFBundleDisplayName: VoiceCleaner
+        CFBundleName: VoiceCleaner
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSApplicationCategoryType: public.app-category.video
@@ -35,8 +35,8 @@ targets:
             LSItemContentTypes: [public.movie, public.audio]
     settings:
       base:
-        PRODUCT_NAME: RE-USE Cleaner
-        PRODUCT_BUNDLE_IDENTIFIER: io.github.wildriver.reuse-cleaner
+        PRODUCT_NAME: VoiceCleaner
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.wildriver.voicecleaner
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
         SWIFT_VERSION: "5.0"
@@ -47,3 +47,4 @@ targets:
         DEVELOPMENT_TEAM: ""
         ENABLE_USER_SCRIPT_SANDBOXING: YES
         DEAD_CODE_STRIPPING: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

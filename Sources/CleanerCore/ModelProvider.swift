@@ -12,9 +12,16 @@ public final class ModelProvider: Sendable {
     public init(applicationSupport: URL? = nil, caches: URL? = nil) throws {
         let fm = FileManager.default
         let support = applicationSupport
-            ?? fm.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("RE-USE Cleaner")
+            ?? fm.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appendingPathComponent("VoiceCleaner")
         let cache = caches
-            ?? fm.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("RE-USE Cleaner")
+            ?? fm.urls(for: .cachesDirectory, in: .userDomainMask)[0].appendingPathComponent("VoiceCleaner")
+        // Earlier builds were named "RE-USE Cleaner": reuse an already downloaded model.
+        if applicationSupport == nil {
+            let legacy = support.deletingLastPathComponent().appendingPathComponent("RE-USE Cleaner")
+            if !fm.fileExists(atPath: support.path), fm.fileExists(atPath: legacy.path) {
+                try? fm.moveItem(at: legacy, to: support)
+            }
+        }
         try fm.createDirectory(at: support, withIntermediateDirectories: true)
         try fm.createDirectory(at: cache, withIntermediateDirectories: true)
         guard let catalogURL = Bundle.module.url(forResource: "ModelCatalog", withExtension: "json"),
