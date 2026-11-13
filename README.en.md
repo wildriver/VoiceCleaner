@@ -7,7 +7,6 @@
 </p>
 
 <p align="center">
-  <a href="https://apps.apple.com/app/voicecleaner/id6830195411"><img alt="Mac App Store" src="https://img.shields.io/badge/Mac%20App%20Store-free-0D96F6?logo=apple&logoColor=white"></a>
   <img alt="macOS 15+" src="https://img.shields.io/badge/macOS-15%2B-111827?logo=apple&logoColor=white">
   <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple%20Silicon-M1%E2%80%93M4-4F46E5">
   <img alt="Native rate, multichannel" src="https://img.shields.io/badge/audio-native%20rate%20%C2%B7%20multichannel-0E7490">
@@ -22,7 +21,7 @@
 </p>
 
 <p align="center">
-  <a href="https://apps.apple.com/app/voicecleaner/id6830195411"><img alt="Get it on the Mac App Store" src="https://img.shields.io/badge/Get%20it%20on%20the%20Mac%20App%20Store-0D96F6?style=for-the-badge&logo=apple&logoColor=white" height="40"></a>
+  <a href="https://apps.apple.com/app/voicecleaner/id6830195411"><img alt="Download on the Mac App Store" src="https://toolbox.marketingtools.apple.com/api/badges/download-on-the-mac-app-store/black/en-us" height="54"></a>
 </p>
 
 ---
