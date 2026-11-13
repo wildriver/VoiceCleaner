@@ -7,6 +7,7 @@
 </p>
 
 <p align="center">
+  <a href="https://apps.apple.com/app/voicecleaner/id6830195411"><img alt="Mac App Store" src="https://img.shields.io/badge/Mac%20App%20Store-%E7%84%A1%E6%96%99-0D96F6?logo=apple&logoColor=white"></a>
   <img alt="macOS 15+" src="https://img.shields.io/badge/macOS-15%2B-111827?logo=apple&logoColor=white">
   <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple%20Silicon-M1%E2%80%93M4-4F46E5">
   <img alt="Native rate, multichannel" src="https://img.shields.io/badge/audio-native%20rate%20%C2%B7%20multichannel-0E7490">
@@ -18,6 +19,10 @@
 <p align="center">
   <b>VoiceCleaner</b> は、動画や音声ファイルをドロップするだけで、声の背景ノイズを取り除く macOS アプリです。<br>
   NVIDIA の音声強調モデル <a href="https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE">RE-USE</a> を Mac の GPU で動かし、映像には一切手を加えません。
+</p>
+
+<p align="center">
+  <a href="https://apps.apple.com/app/voicecleaner/id6830195411"><img alt="Mac App Store で入手" src="https://img.shields.io/badge/Mac%20App%20Store%20%E3%81%A7%E5%85%A5%E6%89%8B-0D96F6?style=for-the-badge&logo=apple&logoColor=white" height="40"></a>
 </p>
 
 ---
@@ -55,7 +60,7 @@
 <td width="50%" valign="top">
 
 ### 🔒 すべて Mac の中で
-ファイルを外部に送信しません。通信は初回のモデル取得（約54 MB）だけです。
+ファイルを外部に送信しません。App Store 版はモデルを同梱しており、通信を一切行いません（GitHub 版の通信は初回のモデル取得、約54 MB だけです）。
 
 ### 🧲 ドラッグ＆ドロップ
 ファイルをウィンドウに落とすだけ。複数ファイルは順番に処理し、残り時間も表示します。
@@ -66,11 +71,16 @@
 
 ## 🚀 使い方
 
-1. [**Releases**](../../releases/latest) から `VoiceCleaner.dmg` をダウンロードします。
-2. `VoiceCleaner.dmg` を開き、アプリを「アプリケーション」フォルダへドラッグします。
-3. VoiceCleaner を起動します。初回だけ、ノイズ除去モデルを自動でダウンロードします。
-4. 動画（MP4・MOV・M4V・AVI）や音声（WAV・AIFF・FLAC・M4A・MP3・Ogg など）をウィンドウにドロップします。
-5. 完了すると、元のファイルと同じフォルダに **`元の名前_clean.<拡張子>`** ができます（動画は同じ形式、音声は WAV→WAV、FLAC→FLAC、MP3 などは M4A）。「Finderで表示」ですぐ開けます。
+1. [**Mac App Store**](https://apps.apple.com/app/voicecleaner/id6830195411) から VoiceCleaner を入手します（無料）。
+2. VoiceCleaner を起動し、動画（MP4・MOV・M4V・AVI）や音声（WAV・AIFF・FLAC・M4A・MP3・Ogg など）をウィンドウにドロップします。
+3. 完了すると、元のファイルと同じフォルダに **`元の名前_clean.<拡張子>`** ができます（動画は同じ形式、音声は WAV→WAV、FLAC→FLAC、MP3 などは M4A）。「Finderで表示」ですぐ開けます。
+
+> [!NOTE]
+> App Store 版は、元のファイルと同じフォルダに保存する許可がないときに、保存先のフォルダを尋ねます。一度選んだフォルダには、次からは確認なしで保存します。
+
+### GitHub 版（DMG）
+
+App Store を使わない場合は、[**Releases**](../../releases/latest) から `VoiceCleaner.dmg` をダウンロードし、アプリを「アプリケーション」フォルダへドラッグしてください。GitHub 版は、初回起動時にノイズ除去モデル（約54 MB）を自動でダウンロードします。機能は App Store 版と同じです。
 
 ## 🛠 しくみ
 
@@ -145,7 +155,7 @@ Apple M4 Max（メモリ 128 GB）で、モノラル 120 秒の音声にかか�
 
 - アプリのコード：Apache-2.0（[LICENSE](LICENSE)・[NOTICE](NOTICE)）
 - `Sources/ReuseKit`・`Sources/ReuseModelAssets`：[Corvelis/RE-USE-MLX-CoreML](https://github.com/Corvelis/RE-USE-MLX-CoreML) v0.1.0（Apache-2.0）を改変
-- モデル：NVIDIA RE-USE、OpenMDW-1.1（[licenses/NVIDIA-RE-USE.txt](licenses/NVIDIA-RE-USE.txt)）。商用利用も可能な [nvidia/NVIDIA-NemotronLabs-RE-USE](https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE) 版から変換した重みを使います（非商用ライセンス NSCLv1 の旧 `nvidia/RE-USE` とは別物です）。リポジトリには含まず、初回起動時にダウンロードします
+- モデル：NVIDIA RE-USE、OpenMDW-1.1（[licenses/NVIDIA-RE-USE.txt](licenses/NVIDIA-RE-USE.txt)）。商用利用も可能な [nvidia/NVIDIA-NemotronLabs-RE-USE](https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE) 版から変換した重みを使います（非商用ライセンス NSCLv1 の旧 `nvidia/RE-USE` とは別物です）。重みはリポジトリには含まず、App Store 版はアプリに同梱し、GitHub 版は初回起動時にダウンロードします
 - 依存ライブラリ：[licenses/](licenses/) を参照
 
 
