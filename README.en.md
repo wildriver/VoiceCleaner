@@ -20,6 +20,10 @@
   It runs NVIDIA's speech enhancement model <a href="https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE">RE-USE</a> on your Mac's GPU and never touches the video itself.
 </p>
 
+<p align="center">
+  <a href="https://apps.apple.com/app/voicecleaner/id6830195411"><img alt="Download on the Mac App Store" src="https://toolbox.marketingtools.apple.com/api/badges/download-on-the-mac-app-store/black/en-us" height="54"></a>
+</p>
+
 ---
 
 ## 🎬 Demo
@@ -55,7 +59,7 @@ The sample rate and channel count are kept. Stereo and 5.1 are enhanced channel 
 <td width="50%" valign="top">
 
 ### 🔒 Everything stays on your Mac
-Your files are never uploaded. The only network access is the one-time model download (about 54 MB).
+Your files are never uploaded. The App Store version ships with the model and makes no network connections at all (the GitHub version only downloads the model once, about 54 MB).
 
 ### 🧲 Drag and drop
 Drop files onto the window. Multiple files are processed in order, with an estimate of the remaining time.
@@ -66,11 +70,15 @@ Drop files onto the window. Multiple files are processed in order, with an estim
 
 ## 🚀 Getting started
 
-1. Download `VoiceCleaner.dmg` from [**Releases**](../../releases/latest).
-2. Open `VoiceCleaner.dmg` and drag the app into your Applications folder.
-3. Launch VoiceCleaner. On first launch it downloads the noise removal model automatically.
-4. Drop a video (MP4, MOV, M4V, AVI) or audio file (WAV, AIFF, FLAC, M4A, MP3, Ogg, …) onto the window.
-5. When it finishes, **`<original name>_clean.<ext>`** appears next to the original file (videos keep their container; WAV→WAV, FLAC→FLAC, MP3 and others→M4A). Click "Finderで表示" (Show in Finder) to open it.
+1. Get VoiceCleaner for free from the [**Mac App Store**](https://apps.apple.com/app/voicecleaner/id6830195411).
+2. Launch VoiceCleaner and drop a video (MP4, MOV, M4V, AVI) or audio file (WAV, AIFF, FLAC, M4A, MP3, Ogg, …) onto the window.
+3. When it finishes, **`<original name>_clean.<ext>`** appears next to the original file (videos keep their container; WAV→WAV, FLAC→FLAC, MP3 and others→M4A). Click "Finderで表示" (Show in Finder) to open it.
+
+If the App Store version has no permission to write next to the original file, it asks you to choose a folder. Once you choose a folder, it saves there without asking again.
+
+### GitHub version (DMG)
+
+If you prefer not to use the App Store, download `VoiceCleaner.dmg` from [**Releases**](../../releases/latest) and drag the app into your Applications folder. The GitHub version downloads the noise removal model (about 54 MB) on first launch; otherwise it works the same as the App Store version.
 
 > [!NOTE]
 > The app's user interface is currently in Japanese.
@@ -148,5 +156,5 @@ Time to clean 120 s of mono audio on an Apple M4 Max (128 GB). Stereo takes abou
 
 - App code: Apache-2.0 ([LICENSE](LICENSE), [NOTICE](NOTICE))
 - `Sources/ReuseKit` and `Sources/ReuseModelAssets`: modified from [Corvelis/RE-USE-MLX-CoreML](https://github.com/Corvelis/RE-USE-MLX-CoreML) v0.1.0 (Apache-2.0)
-- Model: NVIDIA RE-USE, OpenMDW-1.1 ([licenses/NVIDIA-RE-USE.txt](licenses/NVIDIA-RE-USE.txt)). The weights are converted from [nvidia/NVIDIA-NemotronLabs-RE-USE](https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE), which allows commercial use; the older `nvidia/RE-USE` release (noncommercial NSCLv1) is a different checkpoint. Not included in this repository; downloaded on first launch
+- Model: NVIDIA RE-USE, OpenMDW-1.1 ([licenses/NVIDIA-RE-USE.txt](licenses/NVIDIA-RE-USE.txt)). The weights are converted from [nvidia/NVIDIA-NemotronLabs-RE-USE](https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE), which allows commercial use; the older `nvidia/RE-USE` release (noncommercial NSCLv1) is a different checkpoint. The weights are not included in this repository; the App Store version bundles them, and the GitHub version downloads them on first launch
 - Dependencies: see [licenses/](licenses/)
